@@ -24,6 +24,8 @@ func APIResponse(message string, statusCode int, data interface{}) ResponseDefau
 		status = "Created"
 	case http.StatusBadRequest:
 		status = "Bad Request"
+	case http.StatusUnauthorized:
+		status = "Unauthorized"
 	case http.StatusNotFound:
 		status = "Not Found"
 	case http.StatusInternalServerError:

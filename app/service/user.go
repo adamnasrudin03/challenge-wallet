@@ -70,5 +70,5 @@ func (srv *userService) Login(input dto.LoginReq) (res dto.LoginRes, statusCode 
 		return res, http.StatusInternalServerError, err
 	}
 
-	return res, http.StatusBadRequest, err
+	return res, http.StatusOK, err
 }

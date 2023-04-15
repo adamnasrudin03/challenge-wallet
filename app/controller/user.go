@@ -51,7 +51,7 @@ func (c *userController) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(statusHttp, helpers.APIResponse("", statusHttp, userRes))
+	ctx.JSON(statusHttp, helpers.APIResponse("Created", statusHttp, userRes))
 }
 
 func (c *userController) Login(ctx *gin.Context) {
@@ -80,5 +80,5 @@ func (c *userController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(statusHttp, helpers.APIResponse("", statusHttp, loginRes))
+	ctx.JSON(statusHttp, helpers.APIResponse("Success", statusHttp, loginRes))
 }

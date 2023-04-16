@@ -9,7 +9,8 @@ import (
 
 func WiringRepository(db *gorm.DB) *repository.Repositories {
 	return &repository.Repositories{
-		User: repository.NewUserRepository(db),
+		User:        repository.NewUserRepository(db),
+		Transaction: repository.NewTransactionRepository(db),
 	}
 }
 

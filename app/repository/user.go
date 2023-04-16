@@ -15,6 +15,7 @@ type UserRepository interface {
 	Register(input entity.User) (res entity.User, err error)
 	Login(input dto.LoginReq) (res entity.User, er error)
 	GetByEmail(email string) (res entity.User, err error)
+	MyWallet(userID uint64) (res entity.Wallet, err error)
 }
 
 type userRepo struct {
@@ -53,6 +54,14 @@ func (repo *userRepo) Login(input dto.LoginReq) (res entity.User, err error) {
 func (repo *userRepo) GetByEmail(email string) (res entity.User, err error) {
 	if err = repo.DB.Where("email = ?", email).Take(&res).Error; err != nil {
 		log.Printf("[UserRepository-GetByEmail] error : %+v \n", err)
+		return
+	}
+	return
+}
+
+func (repo *userRepo) MyWallet(userID uint64) (res entity.Wallet, err error) {
+	if err = repo.DB.Preload("Users").Where("user_id = ?", userID).Take(&res).Error; err != nil {
+		log.Printf("[UserRepository-MyWallet] error : %+v \n", err)
 		return
 	}
 	return

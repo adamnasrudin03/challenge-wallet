@@ -16,6 +16,7 @@ import (
 type UserService interface {
 	Register(input dto.RegisterReq) (res entity.User, statusCode int, err error)
 	Login(input dto.LoginReq) (res dto.LoginRes, statusCode int, err error)
+	MyWallet(userID uint64) (res entity.Wallet, statusCode int, err error)
 }
 
 type userService struct {
@@ -67,6 +68,20 @@ func (srv *userService) Login(input dto.LoginReq) (res dto.LoginRes, statusCode 
 	res.Token, err = helpers.GenerateToken(user.ID, user.FullName, user.Email)
 	if err != nil {
 		log.Printf("[UserService-Login] error generate token: %+v \n", err)
+		return res, http.StatusInternalServerError, err
+	}
+
+	return res, http.StatusOK, err
+}
+
+func (srv *userService) MyWallet(userID uint64) (res entity.Wallet, statusCode int, err error) {
+	res, err = srv.userRepository.MyWallet(userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) || res.ID == 0 {
+		return res, http.StatusNotFound, err
+	}
+
+	if err != nil {
+		log.Printf("[UserService-MyWallet] error: %+v \n", err)
 		return res, http.StatusInternalServerError, err
 	}
 

@@ -9,11 +9,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt"
 )
 
 type UserController interface {
 	Register(ctx *gin.Context)
 	Login(ctx *gin.Context)
+	MyWallet(ctx *gin.Context)
 }
 
 type userController struct {
@@ -81,4 +83,17 @@ func (c *userController) Login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(statusHttp, helpers.APIResponse("Success", statusHttp, loginRes))
+}
+
+func (c *userController) MyWallet(ctx *gin.Context) {
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userID := uint64(userData["id"].(float64))
+
+	res, statusHttp, err := c.Service.User.MyWallet(userID)
+	if err != nil {
+		ctx.JSON(statusHttp, helpers.APIResponse(err.Error(), statusHttp, nil))
+		return
+	}
+
+	ctx.JSON(statusHttp, helpers.APIResponse("Success", statusHttp, res))
 }

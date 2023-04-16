@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserRepository interface {
@@ -79,7 +80,7 @@ func (repo *userRepo) GetByEmail(email string) (res entity.User, err error) {
 }
 
 func (repo *userRepo) MyWallet(userID uint64) (res entity.Wallet, err error) {
-	if err = repo.DB.Preload("Users").Where("user_id = ?", userID).Take(&res).Error; err != nil {
+	if err = repo.DB.Preload(clause.Associations).Where("user_id = ?", userID).Take(&res).Error; err != nil {
 		log.Printf("[UserRepository-MyWallet] error : %+v \n", err)
 		return
 	}

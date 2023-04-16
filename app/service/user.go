@@ -10,11 +10,12 @@ import (
 	"adamnasrudin03/challenge-wallet/app/repository"
 	"adamnasrudin03/challenge-wallet/pkg/helpers"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type UserService interface {
-	Register(input dto.RegisterReq) (res entity.User, statusCode int, err error)
+	Register(ctx *gin.Context, input dto.RegisterReq) (res entity.User, statusCode int, err error)
 	Login(input dto.LoginReq) (res dto.LoginRes, statusCode int, err error)
 	MyWallet(userID uint64) (res entity.Wallet, statusCode int, err error)
 }
@@ -29,7 +30,7 @@ func NewUserService(UserRepo repository.UserRepository) UserService {
 	}
 }
 
-func (srv *userService) Register(input dto.RegisterReq) (res entity.User, statusCode int, err error) {
+func (srv *userService) Register(ctx *gin.Context, input dto.RegisterReq) (res entity.User, statusCode int, err error) {
 	user := entity.User{
 		FullName: input.FullName,
 		Password: input.Password,
@@ -43,7 +44,7 @@ func (srv *userService) Register(input dto.RegisterReq) (res entity.User, status
 		return res, http.StatusConflict, err
 	}
 
-	res, err = srv.userRepository.Register(user)
+	res, err = srv.userRepository.Register(ctx, user)
 	if err != nil {
 		log.Printf("[UserService-Register] error create data: %+v \n", err)
 		return res, http.StatusInternalServerError, err

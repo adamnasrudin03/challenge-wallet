@@ -47,7 +47,7 @@ func (c *userController) Register(ctx *gin.Context) {
 		return
 	}
 
-	userRes, statusHttp, err := c.Service.User.Register(input)
+	userRes, statusHttp, err := c.Service.User.Register(ctx, input)
 	if err != nil {
 		ctx.JSON(statusHttp, helpers.APIResponse(err.Error(), statusHttp, nil))
 		return

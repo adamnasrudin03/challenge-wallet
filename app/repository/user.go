@@ -8,11 +8,12 @@ import (
 	"adamnasrudin03/challenge-wallet/app/entity"
 	"adamnasrudin03/challenge-wallet/pkg/helpers"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	Register(input entity.User) (res entity.User, err error)
+	Register(ctx *gin.Context, input entity.User) (res entity.User, err error)
 	Login(input dto.LoginReq) (res entity.User, er error)
 	GetByEmail(email string) (res entity.User, err error)
 	MyWallet(userID uint64) (res entity.Wallet, err error)
@@ -28,12 +29,30 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (repo *userRepo) Register(input entity.User) (res entity.User, err error) {
-	if err := repo.DB.Create(&input).Error; err != nil {
+func (repo *userRepo) Register(ctx *gin.Context, input entity.User) (res entity.User, err error) {
+	query := repo.DB.Begin().WithContext(ctx)
+	myWallet := entity.Wallet{}
+	err = query.Create(&input).Error
+	if err != nil {
+		query.Rollback()
 		log.Printf("[UserRepository-Register] error register new user: %+v \n", err)
 		return input, err
 	}
 
+	myWallet.UserID = input.ID
+	err = query.Create(&myWallet).Error
+	if err != nil {
+		query.Rollback()
+		log.Printf("[UserRepository-Register] error create my wallet : %+v \n", err)
+		return input, err
+	}
+
+	err = query.Commit().Error
+	if err != nil {
+		query.Rollback()
+		log.Printf("[UserRepository-Register] error commit tx: %+v \n", err)
+		return
+	}
 	return input, err
 }
 

@@ -50,10 +50,11 @@ func (c *txHandler) Create(ctx *gin.Context) {
 	}
 
 	tx := entity.Transaction{
-		UserID: userID,
-		Type:   "OUT",
-		Name:   input.Name,
-		Amount: input.Amount,
+		UserID:   userID,
+		Type:     "OUT",
+		Quantity: input.Quantity,
+		Name:     input.Name,
+		Amount:   input.Amount,
 	}
 
 	res, statusHttp, err := c.Service.Transaction.Create(ctx, tx)

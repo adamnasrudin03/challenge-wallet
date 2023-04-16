@@ -16,6 +16,7 @@ func WiringRepository(db *gorm.DB) *repository.Repositories {
 
 func WiringService(repo *repository.Repositories) *service.Services {
 	return &service.Services{
-		User: service.NewUserService(repo.User),
+		User:        service.NewUserService(repo.User),
+		Transaction: service.NewTransactionService(repo.Transaction),
 	}
 }

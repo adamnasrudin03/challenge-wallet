@@ -37,5 +37,5 @@ func (srv *transactionSrv) Create(ctx *gin.Context, input entity.Transaction) (r
 		return res, http.StatusInternalServerError, err
 	}
 
-	return res, http.StatusOK, err
+	return res, http.StatusCreated, err
 }

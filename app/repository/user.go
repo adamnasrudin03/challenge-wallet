@@ -84,5 +84,6 @@ func (repo *userRepo) MyWallet(userID uint64) (res entity.Wallet, err error) {
 		log.Printf("[UserRepository-MyWallet] error : %+v \n", err)
 		return
 	}
+	res.User.Password = ""
 	return
 }

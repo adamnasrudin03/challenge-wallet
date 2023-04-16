@@ -22,7 +22,8 @@ var (
 	repo     = app.WiringRepository(db)
 	services = app.WiringService(repo)
 
-	userController controller.UserController = controller.NewUserController(services)
+	userController controller.UserController        = controller.NewUserController(services)
+	txController   controller.TransactionController = controller.NewTransactionController(services)
 )
 
 func main() {
@@ -40,6 +41,7 @@ func main() {
 
 	// Route here
 	routers.UserRouter(router, userController)
+	routers.TransactionRouter(router, txController)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, helpers.APIResponse("page not found", http.StatusNotFound, nil))

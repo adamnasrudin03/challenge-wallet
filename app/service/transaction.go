@@ -12,7 +12,7 @@ import (
 )
 
 type TransactionService interface {
-	Create(ctx *gin.Context, input entity.Transaction) (res entity.Transaction, statusCode int, err error)
+	Create(ctx *gin.Context, input entity.Transaction) (res entity.TransactionRes, statusCode int, err error)
 }
 
 type transactionSrv struct {
@@ -25,7 +25,7 @@ func NewTransactionService(TransactionRepo repository.TransactionRepository) Tra
 	}
 }
 
-func (srv *transactionSrv) Create(ctx *gin.Context, input entity.Transaction) (res entity.Transaction, statusCode int, err error) {
+func (srv *transactionSrv) Create(ctx *gin.Context, input entity.Transaction) (res entity.TransactionRes, statusCode int, err error) {
 	res, err = srv.TransactionRepository.Create(ctx, input)
 	if err == errors.New("your money is not enough") {
 		log.Printf("[TransactionService-Create] error create data: %+v \n", err)

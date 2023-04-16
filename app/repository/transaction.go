@@ -11,7 +11,7 @@ import (
 )
 
 type TransactionRepository interface {
-	Create(ctx *gin.Context, input entity.Transaction) (res entity.Transaction, err error)
+	Create(ctx *gin.Context, input entity.Transaction) (res entity.TransactionRes, err error)
 }
 
 type txRepo struct {
@@ -24,7 +24,7 @@ func NewTransactionRepository(db *gorm.DB) TransactionRepository {
 	}
 }
 
-func (repo *txRepo) Create(ctx *gin.Context, input entity.Transaction) (res entity.Transaction, err error) {
+func (repo *txRepo) Create(ctx *gin.Context, input entity.Transaction) (res entity.TransactionRes, err error) {
 	query := repo.DB.Begin().WithContext(ctx)
 	myWallet := entity.Wallet{}
 
@@ -42,7 +42,7 @@ func (repo *txRepo) Create(ctx *gin.Context, input entity.Transaction) (res enti
 	if err != nil {
 		query.Rollback()
 		log.Printf("[TransactionRepository-Create] error Create new Transaction: %+v \n", err)
-		return input, err
+		return
 	}
 
 	if input.Type == "IN" {
@@ -55,7 +55,7 @@ func (repo *txRepo) Create(ctx *gin.Context, input entity.Transaction) (res enti
 	if err != nil {
 		query.Rollback()
 		log.Printf("[TransactionRepository-Create] error Update wallet: %+v \n", err)
-		return input, err
+		return
 	}
 
 	err = query.Commit().Error
@@ -65,5 +65,16 @@ func (repo *txRepo) Create(ctx *gin.Context, input entity.Transaction) (res enti
 		return
 	}
 
-	return input, err
+	res = entity.TransactionRes{
+		ID:        input.ID,
+		UserID:    input.UserID,
+		Amount:    input.Amount,
+		Quantity:  input.Quantity,
+		Name:      input.Name,
+		Type:      input.Type,
+		CreatedAt: input.CreatedAt,
+		UpdatedAt: input.UpdatedAt,
+	}
+
+	return res, err
 }
